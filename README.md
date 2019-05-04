@@ -1,20 +1,19 @@
-[![GoDoc](https://godoc.org/github.com/shawnsmithdev/discographic?status.png)](https://godoc.org/github.com/shawnsmithdev/discographic)
 [![license](http://img.shields.io/badge/license-MIT-red.svg?style=flat)](https://raw.githubusercontent.com/shawnsmithdev/discographic/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/shawnsmithdev/discographic)](https://goreportcard.com/report/github.com/shawnsmithdev/discographic)
 
 About
 =====
 
-*discographic* is a server daemon that scans a directory of music and serves music files and browsing music
-collection metadata over a REST api.  Browsing structure is defined using metadata read from file tags, but actual music
-resources are referenced by metadata agnostic hashes. This allows updates to metadata tags by other applications to only
-affect browsing, leaving playback of existing playlists and queues unaffected.
+`discographic` is a server daemon that scans a directory of music and serves music files and metadata over a REST api.
+Browsing structure is defined using metadata read from file tags, but actual music resources are referenced by metadata
+agnostic hashes. This allows updates to metadata tags by other applications to only affect browsing, leaving playback of
+existing playlists and queues unaffected.
 
-discographic can be compared to mpd (Music Player Daemon), except that discographic does not play back music itself,
+`discographic` can be compared to mpd (Music Player Daemon), except that `discographic` does not play back music itself,
 as the client is expected to decode and play audio files directly. The REST api only serves the music files and browsing
 metadata.
 
-Another similar tool is Plex, however `discographic` only supports music collections.
+Another similar tool is Plex, however Plex has video support, whereas `discographic` only supports music collections.
 
 The tool comes bundled with an extremely basic web app client built using vue.js and html5 audio tags.
 The long term goal is to support native apps with the flexibilty of foobar2000 but with a REST-based server-client
@@ -52,14 +51,17 @@ Implemented Features
 
 Planned Features
 ================
-[] Opus support in main music library (needs fix for tag library)
-[] Fix web ui play buttons
-[] Monitor file system changes, realtime library updates
-[] Store incremental metadata changes in database file (avoid full rescan of music library on small changes)
-[] Optional flac to opus transcoding during playback (low bandwidth, ex. home vpn)
-[] Flexible metadata queries using custom dsl (like foobar2000 has)
-[] Support reference of collections by hash of child or song hashes (Merkle Tree)
-[] Support low max depth of metadata query results (requires collection references)
+[ ] Opus support in main music library (needs fix for tag library)
+[ ] Fix web ui play buttons
+[ ] Flexible metadata queries using custom dsl (like foobar2000 has)
+[ ] Organize UI by query results or file system structure, remove AlbumArtistDate api
+[ ] Monitor file system changes, realtime library updates
+[ ] Manually trigger root and subfolder rescans from api and ui.
+[ ] Store incremental metadata changes in database file (avoid full rescan of music library on small changes)
+[ ] Optional flac to opus transcoding during playback (low bandwidth, ex. home vpn)
+[ ] Support reference of collections by hash of child or song hashes (Merkle Tree)
+[ ] Support low max depth of metadata query results (requires collection references)
+[ ] Better Web UI
 
 Feature Graveyard
 =================
