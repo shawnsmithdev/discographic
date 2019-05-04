@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Discographic - Web Music Player</title>
+    <meta charset="utf-8">
+
+    <!-- css -->
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootswatch/4.2.1/darkly/bootstrap.min.css"
+          integrity="sha384-F7cPHYSdE3FzBKvdxDKyFow9Y28Yq7KGHQOKpOI+rwc8s6jJnp///mpEJAib2EM6"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="css/discographic.css">
+
+    <!-- js libraries -->
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.21/vue.min.js"
+            integrity="sha256-ui3vFTgbIIvd9ePh+wF+ju05O3jympV4FyFlpNMV2cw="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
+            integrity="sha256-mpnrJ5DpEZZkwkE1ZgkEQQJW/46CSEh/STrZKOB/qoM="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/filesize/4.0.0/filesize.min.js"
+            integrity="sha256-z9L0xFMQacHgYNxm9vYJqM5fPm308Njh/FgX4T7sWis="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="discographic">
+    <div v-show="loadedPlaylist" class="container">
+        <div id="music-playback-root" class="card">
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-2 text-right">
+                    <button type="button"
+                            class="btn btn-primary"
+                            :class="{ 'disabled': 0 === currentSong}"
+                            @click="changeSong(-1)">
+                        Prev
+                        <i class="fas fa-arrow-circle-left"></i>
+                    </button>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card">
+                        <audio controls="controls" ref="mpaudio" class=""></audio>
+                    </div>
+                </div>
+                <div class="col-sm-2 text-left">
+                    <button type="button"
+                            class="btn btn-primary"
+                            :class="{ 'disabled': (playQueue.length-1) === currentSong}"
+                            @click="changeSong(1)">
+                        <i class="fas fa-arrow-circle-right"></i>
+                        Next
+                    </button>
+                </div>
+            </div>
+            <div id="music-playlist-root" class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-xl-10">
+                    <div id="music-playlist-ui" class="card p-3">
+                        <ul class="list-group">
+                            <li class="list-group-item"
+                                v-for="(song, idx) in playQueue"
+                                :class="{ 'active': idx === currentSong, 'list-group-item-dark': idx < currentSong }">
+                                <div>
+                                    <button type="button" class="btn btn-outline-info" @click="showQueueInfo(idx)">
+                                        <i class="fas fa-info-circle"></i>
+                                    </button>
+                                    <span>{{ song.title }}</span>
+                                </div>
+                                <div class="playqueueMetadata" v-show="playQueueShow == idx">
+                                    <table class="table table-sm table-hover table-bordered">
+                                        <tbody>
+                                        <tr v-if="playQueue[idx].artist">
+                                            <th>Artist</th>
+                                            <td>{{ playQueue[idx].artist }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].album_artist && playQueue[idx].album_artist != playQueue[idx].artist">
+                                            <th>Album Artist</th>
+                                            <td>{{ playQueue[idx].album_artist }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].composer && playQueue[idx].composer != playQueue[idx].artist">
+                                            <th>Composer</th>
+                                            <td>{{ playQueue[idx].composer }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].album">
+                                            <th>Album</th>
+                                            <td>{{ playQueue[idx].album }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].title">
+                                            <th>Title</th>
+                                            <td>{{ playQueue[idx].title }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].disc">
+                                            <th>Disc</th>
+                                            <td>{{ playQueue[idx].disc }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].track">
+                                            <th>Track</th>
+                                            <td>{{ playQueue[idx].track }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].date">
+                                            <th>Date</th>
+                                            <td>{{ playQueue[idx].date }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].art">
+                                            <th>Artwork</th>
+                                            <td><img class="meta-art" :src="'/music/art/' + playQueue[idx].art" /></td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].show_size">
+                                            <th>Size</th>
+                                            <td>{{ playQueue[idx].show_size }}</td>
+                                        </tr>
+                                        <tr v-if="playQueue[idx].last_modified">
+                                            <th>Modified</th>
+                                            <td>{{ playQueue[idx].last_modified }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Type</th>
+                                            <td>{{ playQueue[idx].file_type }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="music-collection" v-show="loadedCollection" class="container">
+        <div class="card">
+            <div class="row" id="music-path">
+                <div class="col-sm-1"></div>
+                <div class="col-xl-10">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item" v-for="(bcItem, idx) in breadcrumb">
+                                <a href="#" v-if="idx < (breadcrumb.length - 1)" @click="browseUp(idx)">{{ bcItem.name }}</a>
+                                <span v-if="idx === (breadcrumb.length - 1)">{{ bcItem.name }}</span>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+            <div class="row" id="music-list-ui" v-show="loadedCollection">
+                <div class="col-sm-1"></div>
+                <div class="col-xl-10">
+                    <ul class="list-group">
+                        <li class="list-group-item browselist-item" v-for="(song, idx) in browseList">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <a href="#" @click="browseDown(idx)" v-if="breadcrumb.length < 3">
+                                            {{ (song.name === "") ? "(Unknown)" : song.name }}
+                                        </a>
+                                        <span v-if="breadcrumb.length === 3">
+                                           {{(song.title === "") ? "(Unknown)" : song.title }}
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="button" class="btn btn-primary" @click="loadQueueItem(idx)">
+                                            Play <i class="fas fa-play-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="music-loader" class="container">
+        <div class="row" v-show="! loadedCollection">
+            <div class="col-sm-1"></div>
+            <div class="col-xl-10">
+                <div id="music-load-btns" class="card p-3">
+                    <button type="button" class="btn btn-primary" id="btn-load-prime-aad" @click="loadCollection">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row footer">
+            <div class="col-sm">
+                <em>Discographic 2019</em>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/discographic.js"></script>
+</body>
+</html>
