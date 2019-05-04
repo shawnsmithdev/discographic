@@ -51,17 +51,17 @@ Implemented Features
 
 Planned Features
 ================
-[ ] Opus support in main music library (needs fix for tag library)
-[ ] Fix web ui play buttons
-[ ] Flexible metadata queries using custom dsl (like foobar2000 has)
-[ ] Organize UI by query results or file system structure, remove AlbumArtistDate api
-[ ] Monitor file system changes, realtime library updates
-[ ] Manually trigger root and subfolder rescans from api and ui.
-[ ] Store incremental metadata changes in database file (avoid full rescan of music library on small changes)
-[ ] Optional flac to opus transcoding during playback (low bandwidth, ex. home vpn)
-[ ] Support reference of collections by hash of child or song hashes (Merkle Tree)
-[ ] Support low max depth of metadata query results (requires collection references)
-[ ] Better Web UI
+- [ ] Opus support in main music library (needs fix for tag library)
+- [ ] Fix web ui play buttons
+- [ ] Flexible metadata queries using custom dsl (like foobar2000 has)
+- [ ] Organize UI by query results or file system structure, remove AlbumArtistDate api
+- [ ] Monitor file system changes, realtime library updates
+- [ ] Manually trigger root and subfolder rescans from api and ui.
+- [ ] Store incremental metadata changes in database file (avoid full rescan of music library on small changes)
+- [ ] Optional flac to opus transcoding during playback (low bandwidth, ex. home vpn)
+- [ ] Support reference of collections by hash of child or song hashes (Merkle Tree)
+- [ ] Support low max depth of metadata query results (requires collection references)
+- [ ] Better Web UI
 
 Feature Graveyard
 =================
